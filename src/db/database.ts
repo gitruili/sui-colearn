@@ -6,9 +6,10 @@ const supabase = createClient(
 );
 
 type NFTMapping = {
-    sui_address: string;
-    nft_address: string;
-    role_address: string;
+    role_id: string;
+    nft_id: string;
+    address: string;
+    private_key: string;
     created_at: string;
 };
 
@@ -23,7 +24,12 @@ async function getNFTMappings(): Promise<NFTMapping[]> {
 async function storeNFTMapping(mapping: Omit<NFTMapping, 'created_at'>) {
     const { error } = await supabase
         .from('nft_mappings')
-        .insert([mapping]);
+        .insert([{
+            role_id: mapping.role_id,
+            nft_id: mapping.nft_id,
+            address: mapping.address,
+            private_key: mapping.private_key
+        }]);
     return !error;
 }
 

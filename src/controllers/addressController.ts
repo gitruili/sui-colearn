@@ -25,16 +25,17 @@ export const generateSuiAddress = async (req: Request, res: Response) => {
 
 export const storeNFTMappingHandler = async (req: Request, res: Response) => {
     try {
-        const { sui_address, nft_address, role_address } = req.body;
+        const { role_id, nft_id, address, private_key } = req.body;
 
-        if (!sui_address || !nft_address || !role_address) {
+        if (!role_id || !nft_id || !address || !private_key) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
         const success = await storeNFTMapping({
-            sui_address,
-            nft_address,
-            role_address
+            role_id,
+            nft_id,
+            address,
+            private_key
         });
 
         if (!success) {
