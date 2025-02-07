@@ -2,9 +2,19 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import express from 'express';
+import cors from 'cors';
 import { generateSuiAddress, storeNFTMappingHandler, getNFTMappingsHandler } from './controllers/addressController';
 
 const app = express();
+
+// Add CORS middleware
+app.use(cors({
+    origin: '*', // For development. In production, specify your frontend domain
+    methods: ['GET', 'POST'],
+    credentials: true,
+    optionsSuccessStatus: 200
+}));
+
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
