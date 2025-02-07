@@ -6,8 +6,9 @@ export const generateSuiAddress = async (req: Request, res: Response) => {
     try {
         const keypair = new Ed25519Keypair();
         const address = keypair.getPublicKey().toSuiAddress();
+        const secretKey = keypair.getSecretKey();
         
-        const success = await storeUserAddress(address);
+        const success = await storeUserAddress(address, secretKey);
         if (!success) {
             console.error('Failed to store address in database');
             return res.status(500).json({ error: 'Error storing address' });

@@ -36,14 +36,15 @@ async function storeNFTMapping(mapping: Omit<NFTMapping, 'created_at'>) {
 // Similar type assertion for storeUserAddress
 type UserAddress = {
     sui_address: string;
+    secret_key: string;
     created_at: string;
 };
 
-async function storeUserAddress(sui_address: string) {
+async function storeUserAddress(sui_address: string, secret_key: string) {
     try {
         const { error } = await supabase
             .from('user_addresses')
-            .insert([{ sui_address }]);
+            .insert([{ sui_address, secret_key }]);
         
         if (error) {
             console.error('Supabase error:', error);
