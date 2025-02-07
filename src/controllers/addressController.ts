@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
 import { getNFTMappings, storeNFTMapping, storeUserAddress } from '../db/database';
+import { supabase } from '../db/database';
 
 export const generateSuiAddress = async (req: Request, res: Response) => {
     try {
@@ -26,17 +27,29 @@ export const generateSuiAddress = async (req: Request, res: Response) => {
 
 export const storeNFTMappingHandler = async (req: Request, res: Response) => {
     try {
-        const { role_id, nft_id, address, private_key } = req.body;
+        const { role_id, nft_id, address } = req.body;
 
-        if (!role_id || !nft_id || !address || !private_key) {
+        if (!role_id || !nft_id || !address) {
             return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Get private key from user_addresses
+        const { data: userData, error: userError } = await supabase
+            .from('user_addresses')
+            .select('secret_key')
+            .eq('sui_address', address)
+            .single();
+
+        if (userError || !userData) {
+            console.error('Error fetching user address:', userError);
+            return res.status(404).json({ error: 'User address not found' });
         }
 
         const success = await storeNFTMapping({
             role_id,
             nft_id,
             address,
-            private_key
+            private_key: userData.secret_key
         });
 
         if (!success) {
