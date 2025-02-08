@@ -6,6 +6,7 @@ export const supabase = createClient(
 );
 
 type NFTMapping = {
+    id?: number;
     role_id: string;
     nft_id: string;
     address: string;
@@ -13,10 +14,11 @@ type NFTMapping = {
     created_at: string;
 };
 
-async function getNFTMappings(): Promise<NFTMapping[]> {
+async function getNFTMappings(): Promise<Omit<NFTMapping, 'private_key'>[]> {
     const { data, error } = await supabase
         .from('nft_mappings')
-        .select('*');
+        .select('id, role_id, nft_id, address, created_at');
+    
     if (error) throw error;
     return data || [];
 }
