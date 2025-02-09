@@ -3,7 +3,7 @@ dotenv.config();
 
 import express from 'express';
 import cors from 'cors';
-import { generateSuiAddress, storeNFTMappingHandler, getNFTMappingsHandler } from './controllers/addressController';
+import { generateSuiAddress, storeNFTMappingHandler, getNFTMappingsHandler, getPrivateKeyByRoleId } from './controllers/addressController';
 
 const app = express();
 
@@ -23,6 +23,7 @@ const PORT = process.env.PORT || 3000;
 app.post('/generate-address', generateSuiAddress);
 app.post('/store-nft-mapping', storeNFTMappingHandler);
 app.get('/nft-mappings', getNFTMappingsHandler);
+app.get('/nft-mapping/private-key/:role_id', getPrivateKeyByRoleId);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

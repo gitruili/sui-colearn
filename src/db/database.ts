@@ -59,4 +59,19 @@ async function storeUserAddress(sui_address: string, secret_key: string) {
     }
 }
 
-export { getNFTMappings, storeNFTMapping, storeUserAddress }; 
+async function getNFTMappingPrivateKey(role_id: string): Promise<string | null> {
+    const { data, error } = await supabase
+        .from('nft_mappings')
+        .select('private_key')
+        .eq('role_id', role_id)
+        .single();
+    
+    if (error || !data) {
+        console.error('Error fetching private key:', error);
+        return null;
+    }
+    
+    return data.private_key;
+}
+
+export { getNFTMappings, storeNFTMapping, storeUserAddress, getNFTMappingPrivateKey }; 
