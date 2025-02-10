@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { Ed25519Keypair } from '@mysten/sui.js/keypairs/ed25519';
-import { getNFTMappings, storeNFTMapping, storeUserAddress, getNFTMappingPrivateKey } from '../db/database';
+import { getNFTMappings, storeNFTMapping, storeUserAddress, getNFTMappingPrivateKey, getNFTMappingNftId } from '../db/database';
 import { supabase } from '../db/database';
 
 export const generateSuiAddress = async (req: Request, res: Response) => {
@@ -100,5 +100,29 @@ export const getPrivateKeyByRoleId = async (req: Request, res: Response) => {
     } catch (error) {
         console.error('Error fetching private key:', error);
         res.status(500).json({ error: 'Error fetching private key' });
+    }
+};
+
+export const getNftIdByRoleId = async (req: Request, res: Response) => {
+    try {
+        const { role_id } = req.params;
+        
+        if (!role_id) {
+            return res.status(400).json({ error: 'Role ID is required' });
+        }
+
+        const nftId = await getNFTMappingNftId(role_id);
+        
+        if (!nftId) {
+            return res.status(404).json({ error: 'Mapping not found' });
+        }
+
+        res.json({
+            success: true,
+            nft_id: nftId
+        });
+    } catch (error) {
+        console.error('Error fetching NFT ID:', error);
+        res.status(500).json({ error: 'Error fetching NFT ID' });
     }
 }; 

@@ -74,4 +74,19 @@ async function getNFTMappingPrivateKey(role_id: string): Promise<string | null> 
     return data.private_key;
 }
 
-export { getNFTMappings, storeNFTMapping, storeUserAddress, getNFTMappingPrivateKey }; 
+async function getNFTMappingNftId(role_id: string): Promise<string | null> {
+    const { data, error } = await supabase
+        .from('nft_mappings')
+        .select('nft_id')
+        .eq('role_id', role_id)
+        .single();
+    
+    if (error || !data) {
+        console.error('Error fetching NFT ID:', error);
+        return null;
+    }
+    
+    return data.nft_id;
+}
+
+export { getNFTMappings, storeNFTMapping, storeUserAddress, getNFTMappingPrivateKey, getNFTMappingNftId }; 
